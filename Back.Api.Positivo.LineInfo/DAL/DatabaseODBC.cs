@@ -116,7 +116,7 @@ namespace Back.Api.Positivo.LineInfo.DAL
                 //using (_connection)
 
                 //{
-                    OpenConnection();
+                OpenConnection();
                     using (commands)
                     {
                         SetParameters(commands);

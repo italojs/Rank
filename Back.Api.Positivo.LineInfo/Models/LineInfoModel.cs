@@ -106,15 +106,11 @@ namespace Back.Api.Positivo.LineInfo.Models
 
                     return _lineInfo;
                 }
-
-
-
             }
 
             
             private static OdbcCommand GetSqlCommand(int customerId, string query) {
                 OdbcCommand command = new OdbcCommand();
-
                 //command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.CommandText = query;
 
@@ -129,7 +125,8 @@ namespace Back.Api.Positivo.LineInfo.Models
         #region Methods
         public void CalculateEstimatedWaitTime()
         {
-            _estimatedWaitTime = (_position * _timeMedioResponse) / _TotalAgents ;
+            _position++;
+            _estimatedWaitTime =(_position * _timeMedioResponse) / _TotalAgents ;
         }
         #endregion
     }
