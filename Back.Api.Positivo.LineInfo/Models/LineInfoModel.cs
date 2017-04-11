@@ -36,9 +36,9 @@ namespace Back.Api.Positivo.LineInfo.Models
             get{ return _position; }
             private set { }
         }
-        public int EstimatedTime
+        public string EstimatedTime
         {
-            get{return _estimatedWaitTime;}
+            get{return convertToMinutes();}
             private set { }
         }
         
@@ -57,9 +57,9 @@ namespace Back.Api.Positivo.LineInfo.Models
             private static LineInfoModel _lineInfo = null;
             private static IDataBase _db;
             private static string[] Querys = {
-                    "SELECT top 1 SkillsetName LineName, ContactID FROM vw.ContactsByContacts a WHERE a.ContactStatus = 'New' AND a.CustomerID = {0} order by a.ContactOpenTime desc",
+                    "SELECT top 1 SkillsetName LineName, ContactID FROM vw.ContactsByContacts a WHERE a.ContactStatus = 'New' AND a.ContactID = {0} order by a.ContactOpenTime desc",
                     "SELECT ContactId FROM vw.ContactsByContacts a WHERE a.ContactStatus = 'New' AND a.SkillsetName = '{0}' order by a.ContactOpenTime desc",
-                    "SELECT top 100 ContactTotalOpenDuration FROM vw.ContactsByContacts a WHERE a.ContactStatus = 'Closed' AND a.SkillsetName = '{0}' order by a.ContactClosedTime desc"
+                    "SELECT top 100 ContactTotalOpenDuration FROM vw.ContactsByContacts a WHERE a.ContactStatus = 'Closed' AND a.SkillsetName = '{0}' order by a.ArrivalTime DESC"
                 };
 
             public static LineInfoModel Build(IDataBase db, int customerId)
@@ -102,7 +102,7 @@ namespace Back.Api.Positivo.LineInfo.Models
                     _lineInfo._position = 0;
                     _lineInfo._TotalAgents  = 0;
                     _lineInfo._timeMedioResponse = 0;
-                    _lineInfo.EstimatedTime = 0;
+                    _lineInfo.EstimatedTime = "0";
 
                     return _lineInfo;
                 }
@@ -123,10 +123,21 @@ namespace Back.Api.Positivo.LineInfo.Models
         #endregion
 
         #region Methods
-        public void CalculateEstimatedWaitTime()
+        private void CalculateEstimatedWaitTime()
         {
             _position++;
             _estimatedWaitTime =(_position * _timeMedioResponse) / _TotalAgents ;
+        }
+
+       private string convertToMinutes()
+        {
+            if (_estimatedWaitTime > 60)
+            {
+                float minutes = _estimatedWaitTime / 60;
+                return Math.Floor(minutes).ToString();
+            }  
+            else
+                return "0";
         }
         #endregion
     }
